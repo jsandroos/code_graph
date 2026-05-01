@@ -30,7 +30,7 @@ GRAPH_SCHEMA = """
      - `file_path`: Full path to the file
      - `line_start`: Always null for files
      - `line_end`: Always null for files
-     - `callable`: Always false
+     - `is_callable`: Always false
      - `parent_class`: Always null
 
 2. **Class**
@@ -41,7 +41,7 @@ GRAPH_SCHEMA = """
      - `file_path`: Path to the file containing this class
      - `line_start`: Line number where class definition starts
      - `line_end`: Line number where class definition ends
-     - `callable`: Always false
+     - `is_callable`: Always false
      - `parent_class`: Always null
 
 3. **Function**
@@ -52,7 +52,7 @@ GRAPH_SCHEMA = """
      - `file_path`: Path to the file containing this function
      - `line_start`: Line number where function starts
      - `line_end`: Line number where function ends
-     - `callable`: Always true
+     - `is_callable`: Always true
      - `parent_class`: Always null
 
 4. **Method**
@@ -63,7 +63,7 @@ GRAPH_SCHEMA = """
      - `file_path`: Path to the file containing this method
      - `line_start`: Line number where method starts
      - `line_end`: Line number where method ends
-     - `callable`: Always true
+     - `is_callable`: Always true
      - `parent_class`: Name of the containing class
 
 ### Edge Types
@@ -122,13 +122,13 @@ Q: "What classes are in the graph?"
 A: MATCH (c:Class) RETURN c.name AS class_name, c.file_path AS file
 
 Q: "What does the GraphConnector class instantiate?"
-A: MATCH (c:Class {{name: 'GraphConnector'}})-[:INSTANTIATES]->(target) RETURN target.name AS instantiated, labels(target)[0] AS type
+A: MATCH (c:Class {{name: 'GraphConnector'}})-[:INSTANTIATES]->(target) RETURN target.name AS instantiated, labels(target)[0] AS node_type
 
 Q: "Show all methods in the PythonParser class"
 A: MATCH (c:Class {{name: 'PythonParser'}})-[:CONTAINS]->(m:Method) RETURN m.name AS method_name
 
 Q: "What functions does perform_path call?"
-A: MATCH (m:Method {{name: 'perform_path'}})-[:CALLS|INSTANTIATES]->(target) RETURN target.name AS called, labels(target)[0] AS type
+A: MATCH (m:Method {{name: 'perform_path'}})-[:CALLS|INSTANTIATES]->(target) RETURN target.name AS called, labels(target)[0] AS node_type
 
 Q: "Find all classes that inherit from another class"
 A: MATCH (child:Class)-[:INHERITS]->(parent:Class) RETURN child.name AS child_class, parent.name AS parent_class

@@ -1,7 +1,8 @@
 from src.parsers.python_parser import PythonParser
-from src.datamodels import ParseResult, UnresolvedCall
+from src.datamodels import Node, ParseResult, UnresolvedCall
 from src.graph import GraphConnector
 from src.llm import GraphQueryAgent
+from src.docstring_generator import DocstringGenerator
 from typing import Dict, List, Optional
 from pathlib import Path
 
@@ -92,7 +93,21 @@ class CodeAnalyser():
 
         return stats
 
+    def enrich_docstrings(self, parse_result: ParseResult, write_to_source: bool = True) -> Dict[str, int]:
+        """Generate Google-style docstrings for the parsed nodes.
 
+        Thin delegation to `DocstringGenerator.enrich`. The orchestration
+        (staleness check, generation, source write, graph persistence) lives in
+        the docstring layer; this method only forwards the graph reference.
+
+        Args:
+            parse_result: A ParseResult from perform_path / perform_file.
+            write_to_source: When True, also insert docstrings into the .py files.
+
+        Returns:
+            Stats dict (see DocstringGenerator.enrich).
+        """
+        return DocstringGenerator.enrich(parse_result, self.graph, write_to_source)
 
     def perform_file(self, inpath: str, insert_to_graph: bool = True) -> ParseResult:
         """Perform code analysis on a single file.
