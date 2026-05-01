@@ -1,0 +1,16 @@
+name: mail_classifier
+owner_email: jsa@collectiagroup.dk
+jobtype: collectia-py3:latest
+version: 0.0.3
+
+#secret_build_env_file: .env
+secret_runtime_env_file: ../.env
+
+git:
+  remote: https://dev.azure.com/Collectia/CAI/_git/mail_classifier
+  branch: development
+
+python:
+  entrypoint_path: 'mail_classifier.py'
+  entrypoint_class: 'MailClassifier'
+  requirements_path: 'requirements.txt'

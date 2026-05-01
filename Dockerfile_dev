@@ -1,0 +1,16 @@
+FROM python:3.9-slim-bullseye
+
+WORKDIR /app
+
+RUN apt update -y && apt install build-essential -y
+
+RUN apt-get update 
+RUN apt-get install -y sqlite3 libsqlite3-dev
+RUN pip install jupyterlab
+
+COPY requirements.txt .
+
+COPY docker/ /app/docker
+RUN ACCEPT_EULA=Y apt-get install /app/docker/msodbcsql17_17.10.5.1-1_amd64.deb -y
+
+RUN pip3 install -r requirements.txt

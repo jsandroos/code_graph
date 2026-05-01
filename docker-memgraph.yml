@@ -1,0 +1,31 @@
+services:
+  memgraph-python:
+    image: memgraph/memgraph-mage:latest
+    container_name: memgraph-python
+    pull_policy: always
+    ports:
+      - "7687:7687"
+      - "7444:7444"
+    command: ["--log-level=TRACE"]
+
+  memgraph-csharp:
+    image: memgraph/memgraph-mage:latest
+    container_name: memgraph-csharp
+    pull_policy: always
+    ports:
+      - "7688:7687"
+      - "7445:7444"
+    command: ["--log-level=TRACE"]
+
+  lab:
+    image: memgraph/lab:latest
+    container_name: memgraph-lab
+    pull_policy: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - memgraph-python
+      - memgraph-csharp
+    environment:
+      - QUICK_CONNECT_MG_HOST=memgraph-python
+      - QUICK_CONNECT_MG_PORT=7687
