@@ -220,20 +220,35 @@ class DocstringGenerator:
 
     @staticmethod
     def _wrap_docstring(body: str, indent: str) -> str:
-        """Wrap a docstring body in triple double-quotes with proper indentation.
+        """Wrap a docstring body in triple-quotes with proper indentation.
 
         Returns a single string ending in a newline so it can be spliced into a
         list of file lines as a drop-in replacement. Single-line docstrings stay
         on one line; multi-line docstrings open and close on their own lines per
         PEP 257.
+
+        Picks a triple-quote delimiter that does not collide with the body's
+        own content. The common case (no triple quotes in body) uses `\"\"\"`,
+        per Google / PEP 257 convention. If the body contains `\"\"\"` (e.g. an
+        Examples section showing docstring-handling code), `'''` is used
+        instead. If the body contains both, `\"\"\"` is used and any embedded
+        `\"\"\"` is backslash-escaped (valid inside a triple-quoted string).
         """
         body = body.strip()
+        if '"""' not in body:
+            quote = '"""'
+        elif "'''" not in body:
+            quote = "'''"
+        else:
+            quote = '"""'
+            body = body.replace('"""', '\\"\\"\\"')
+
         body_lines = body.splitlines()
         if len(body_lines) <= 1:
-            return f'{indent}"""{body}"""\n'
+            return f'{indent}{quote}{body}{quote}\n'
         first, rest = body_lines[0], body_lines[1:]
         indented_rest = textwrap.indent("\n".join(rest), indent)
-        return f'{indent}"""{first}\n{indented_rest}\n{indent}"""\n'
+        return f'{indent}{quote}{first}\n{indented_rest}\n{indent}{quote}\n'
 
     # ------------------------------------------------------------------
     # Orchestration
