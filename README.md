@@ -95,11 +95,11 @@ Per-node properties (set by the parser unless noted):
 
 | Property               | Set by         | Notes                                           |
 |------------------------|----------------|-------------------------------------------------|
-| `id`                   | parser         | `{type}:{file_path}:{name}` (deterministic)     |
-| `type`                 | parser         | `File` / `Class` / `Function` / `Method`        |
+| `id`                   | parser         | `{node_type}:{file_path}:{name}` (deterministic) |
+| `node_type`            | parser         | `File` / `Class` / `Function` / `Method`        |
 | `name`, `file_path`    | parser         |                                                 |
 | `line_start`, `line_end` | parser       | Used to read source on demand                   |
-| `callable`, `parent_class` | parser     |                                                 |
+| `is_callable`, `parent_class` | parser  |                                                 |
 | `docstring`            | enrichment     | Google-style, generated from source             |
 | `docstring_hash`       | enrichment     | SHA-256 of `docstring`                          |
 | `code_hash`            | enrichment     | SHA-256 of the source segment used to generate  |
